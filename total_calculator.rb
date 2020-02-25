@@ -26,10 +26,6 @@ class TotalCalculator
     end
   end
 
-  def total_promotions
-    promotions.select(&:applies_to_total?)
-  end
-
   def items_with_promotions
     items.map do |item, quantity|
       [decorate_with_promotions(item, quantity), quantity]
@@ -40,10 +36,13 @@ class TotalCalculator
     promotions.select(&:applies_to_item?)
   end
 
+  def total_promotions
+    promotions.select(&:applies_to_total?)
+  end
+
   def decorate_with_promotions(item, quantity)
     item_promotions.reduce(item) do |new_item, promo|
       promo.apply(new_item, quantity)
     end
   end
-
 end
