@@ -10,20 +10,24 @@ class Checkout
   end
 
   def total
-    base_total = items_with_promotions.sum do |item, quantity|
-      item.price * quantity
-    end
-
-    total_with_discount = spending_promotions.reduce(base_total) do |total, promo|
-      promo.apply(total)
-    end
-
-    total_with_discount
+    total_after_spending_promotions
   end
 
   private
 
   attr_reader :promotions
+
+  def total_after_spending_promotions
+    spending_promotions.reduce(total_after_item_promotions) do |total, promo|
+      promo.apply(total)
+    end
+  end
+
+  def total_after_item_promotions
+    items_with_promotions.sum do |item, quantity|
+      item.price * quantity
+    end
+  end
 
   def spending_promotions
     promotions.select(&:applies_to_total?)
