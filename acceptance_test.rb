@@ -135,7 +135,7 @@ class AcceptanceTest < MiniTest::Unit::TestCase
     co.scan(silk_dress)
     price = co.total
 
-    assert_equal price, 66.78, 'Applies TotalDiscount'
+    assert_equal 66.78, price.round(2), 'Applies TotalDiscount'
   end
 
   # Basket: 001, 003, 001
@@ -147,11 +147,21 @@ class AcceptanceTest < MiniTest::Unit::TestCase
     co.scan(red_scarf)
     price = co.total
 
-    assert_equal price, 36.95, 'Applies ProductQuantityDiscount'
+    assert_equal 36.95, price.round(2), 'Applies ProductQuantityDiscount'
   end
 
   # Basket: 001, 002, 001, 003
   # Total price expected: £73.76
+  def test_both_promotions_apply
+    co = Checkout.new(promotional_rules)
+    co.scan(red_scarf)
+    co.scan(silver_cufflinks)
+    co.scan(red_scarf)
+    co.scan(silk_dress)
+    price = co.total
+
+    assert_equal 73.76, price.round(2), 'Applies ProductQuantityDiscount and then TotalDiscount'
+  end
 
     # assert !Quotes.new.weekly(Date.parse('1970-01-01')).nil?
     # assert_equal quotes.weekly, quotes.weekly(Date.today)
