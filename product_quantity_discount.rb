@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-ProductQuantityDiscount = Struct.new(:product_code, :min_quantity, :new_price, keyword_init: true) do
+class ProductQuantityDiscount
+  def initialize(product_code:, min_quantity:, new_price:)
+    @product_code = product_code
+    @min_quantity = min_quantity
+    @new_price = new_price
+  end
+
   def applies_to_total?
     false
   end
@@ -9,14 +15,18 @@ ProductQuantityDiscount = Struct.new(:product_code, :min_quantity, :new_price, k
     true
   end
 
-  def applies?(item, quantity)
-    product_code == item.code && quantity >= min_quantity
-  end
-
   def apply(item, quantity)
     return item unless applies?(item, quantity)
 
     ItemDecorator.new(item, new_price: new_price)
+  end
+
+  private
+
+  attr_reader :product_code, :min_quantity, :new_price
+
+  def applies?(item, quantity)
+    product_code == item.code && quantity >= min_quantity
   end
 
   class ItemDecorator < SimpleDelegator
@@ -31,6 +41,6 @@ ProductQuantityDiscount = Struct.new(:product_code, :min_quantity, :new_price, k
 
     attr_reader :new_price
   end
-  # private_constant :ItemDecorator
+  private_constant :ItemDecorator
 end
 
