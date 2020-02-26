@@ -22,9 +22,9 @@ class AcceptanceTest < MiniTest::Unit::TestCase
 
   def promotional_rules
     [
-      TotalDiscount.new(threshold: 60.00, discount: 0.1),
       ProductQuantityDiscount.new(
-        product_code: product_001.code, min_quantity: 2, new_price: 8.50)
+        product_code: product_001.code, min_quantity: 2, new_price: 8.50),
+      TotalDiscount.new(threshold: 60.00, discount: 0.1)
     ]
   end
 
