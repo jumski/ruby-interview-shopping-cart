@@ -19,8 +19,7 @@ class ProductQuantityDiscount
   end
 
   def applies?(line_items)
-    matching_line_item = line_items[product_code]
-    matching_line_item && applies_to_line_item?(matching_line_item)
+    true # i decided to not check this twice, because we only decorate matching line items
   end
 
   def apply(line_items)
@@ -42,7 +41,7 @@ class ProductQuantityDiscount
   end
 
   def applies_to_line_item?(line_item)
-    line_item.quantity >= min_quantity
+    line_item.product_code == product_code && line_item.quantity >= min_quantity
   end
 
   class LineItemDecorator < SimpleDelegator
@@ -51,8 +50,8 @@ class ProductQuantityDiscount
       @new_price = new_price
     end
 
-    def price
-      new_price
+    def total
+      new_price * quantity
     end
 
     attr_reader :new_price

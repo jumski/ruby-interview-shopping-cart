@@ -17,7 +17,7 @@ class LineItem
   end
 
   def hash
-    product.hash
+    product_code.hash
   end
 
   def product_code

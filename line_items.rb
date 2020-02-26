@@ -8,9 +8,7 @@ class LineItems
   end
 
   def add(product)
-    ensure_line_item_for(product)
-
-    line_item = find_by_product_code(product.code)
+    line_item = ensure_line_item!(product)
     line_item.increase_quantity
   end
 
@@ -32,8 +30,14 @@ class LineItems
 
   private
 
-  def ensure_line_item_for(product)
-    line_items.add LineItem.new(product)
+  def ensure_line_item!(product)
+    find_by_product_code(product.code) || create_line_item!(product)
+  end
+
+  def create_line_item!(product)
+    LineItem.new(product).tap do |line_item|
+      line_items.add(line_item)
+    end
   end
 
   def find_by_product_code(product_code)
