@@ -18,10 +18,6 @@ class ProductQuantityDiscount
     true
   end
 
-  def applies?(line_items)
-    true # i decided to not check this twice, because we only decorate matching line items
-  end
-
   def apply(line_items)
     decorated_items = line_items.map { |item| decorate_if_applies(item) }
 

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class LineItems
-  attr_reader :line_items
+  attr_reader :items
 
-  def initialize(line_items = [])
-    @line_items = Set.new(line_items)
+  def initialize(items = [])
+    @items = Set.new(items)
   end
 
   def add(product)
@@ -13,7 +13,7 @@ class LineItems
   end
 
   def total
-    line_items.sum(&:total)
+    items.sum(&:total)
   end
 
   def [](product_code)
@@ -25,7 +25,7 @@ class LineItems
   end
 
   def map(&block)
-    line_items.map(&block)
+    items.map(&block)
   end
 
   private
@@ -36,11 +36,11 @@ class LineItems
 
   def create_line_item!(product)
     LineItem.new(product).tap do |line_item|
-      line_items.add(line_item)
+      items.add(line_item)
     end
   end
 
   def find_by_product_code(product_code)
-    line_items.find{|li| li.product_code == product_code}
+    items.find{|li| li.product_code == product_code}
   end
 end
