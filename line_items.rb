@@ -8,8 +8,9 @@ class LineItems
   end
 
   def add(product)
-    line_item = ensure_line_item!(product)
-    line_item.increase_quantity
+    ensure_line_item!(product).tap do |line_item|
+      line_item.increase_quantity
+    end
   end
 
   def total

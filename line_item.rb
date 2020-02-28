@@ -24,6 +24,10 @@ class LineItem
     product.code
   end
 
+  def ==(other)
+    hash == other.hash
+  end
+
   private
 
   attr_reader :product
