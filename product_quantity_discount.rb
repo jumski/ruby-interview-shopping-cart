@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require './line_items.rb'
+require './line_item.rb'
+
 class ProductQuantityDiscount
   def initialize(product_code:, min_quantity:, new_price:)
     @product_code = product_code
@@ -15,32 +18,39 @@ class ProductQuantityDiscount
     true
   end
 
-  def apply(item, quantity)
-    return item unless applies?(item, quantity)
+  def apply(line_items)
+    decorated_items = line_items.map { |item| decorate_if_applies(item) }
 
-    ItemDecorator.new(item, new_price: new_price)
+    LineItems.new(decorated_items)
   end
 
   private
 
   attr_reader :product_code, :min_quantity, :new_price
 
-  def applies?(item, quantity)
-    product_code == item.code && quantity >= min_quantity
+  def decorate_if_applies(item)
+    if applies_to_line_item?(item)
+      LineItemDecorator.new(item, new_price: new_price)
+    else
+      item
+    end
   end
 
-  class ItemDecorator < SimpleDelegator
+  def applies_to_line_item?(line_item)
+    line_item.product_code == product_code && line_item.quantity >= min_quantity
+  end
+
+  class LineItemDecorator < SimpleDelegator
     def initialize(item, new_price:)
       super(item)
       @new_price = new_price
     end
 
-    def price
-      new_price
+    def total
+      new_price * quantity
     end
 
     attr_reader :new_price
   end
-  private_constant :ItemDecorator
+  private_constant :LineItemDecorator
 end
-

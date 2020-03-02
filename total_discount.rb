@@ -9,14 +9,23 @@ TotalDiscount = Struct.new(:threshold, :discount, keyword_init: true) do
     false
   end
 
-  def applies?(total)
-    total >= threshold
+  def apply(items)
+    return items if items.total < threshold
+
+    LineItemsDecorator.new(items, discount: discount)
   end
 
-  def apply(total)
-    return total unless applies?(total)
+  class LineItemsDecorator < SimpleDelegator
+    def initialize(items, discount:)
+      super(items)
+      @discount = discount
+    end
 
-    (1 - discount) * total
+    def total
+      (1 - discount) * super
+    end
+
+    attr_reader :discount
   end
 end
 

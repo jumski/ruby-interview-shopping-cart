@@ -7,20 +7,20 @@ class Checkout
     @promotions = promotions
   end
 
-  def scan(item)
-    items[item]+= 1
+  def scan(product)
+    line_items.add(product)
   end
 
   def total
-    TotalCalculator.new(items, promotions).calculate
+    TotalCalculator.new(line_items, promotions).calculate
   end
 
   private
 
   attr_reader :promotions
 
-  def items
-    @items ||= Hash.new(0)
+  def line_items
+    @line_items ||= LineItems.new
   end
 end
 
